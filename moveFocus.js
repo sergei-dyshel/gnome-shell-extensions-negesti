@@ -224,6 +224,10 @@ MoveFocus.prototype = {
   	let candidate = candidateWin.get_center();
     let candidateRect = candidateWin.get_frame_rect();
 
+    if (focusRect.overlap(candidateRect)) {
+      return false;
+    }
+
 		// a window is candidate if:
 		// 1. the center of the candidate window is further in the direction you want
 		//	to change to then the center of the focused window
