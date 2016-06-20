@@ -394,7 +394,7 @@ MoveFocus.prototype = {
       }
     }
 
-    this._focusNearesCandidate(candidates);
+    this._activateWindow(candidates[0].window);
   },
 
   _getCurrentScreenIndex: function(win) {
