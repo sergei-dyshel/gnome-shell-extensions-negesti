@@ -11,7 +11,7 @@ function MoveFocus(utils, screens) {
   this._init(utils, screens);
 };
 
-const FLASHSPOT_ANIMATION_OUT_TIME = 2; // seconds
+const FLASHSPOT_ANIMATION_OUT_TIME = 0.25; // seconds
 
 const Flashspot = new Lang.Class({
   Name: 'Flashspot',
@@ -47,7 +47,7 @@ const Flashspot = new Lang.Class({
   },
   fire: function() {
     this.actor.show();
-    this.actor.opacity = 255;
+    this.actor.opacity = 50;
   }
 });
 
