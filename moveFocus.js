@@ -216,6 +216,43 @@ MoveFocus.prototype = {
 
   },
 
+  _win2str: function(win) {
+    return '"' + win.get_title() + '"';
+  },
+
+  _rect2str: function(rect) {
+    return '[x0=' + rect.x + ', y0=' + rect.y + ', x1=' + (rect.x + rect.width)
+      + ', y1=' + (rect.y + rect.height) + ']';
+  },
+
+  _isCovered: function(win) {
+    let allWin = global.display.sort_windows_by_stacking(
+      global.display.get_tab_list(Meta.TabList.NORMAL_ALL, global.screen.get_active_workspace()));
+    let winRect = win.get_frame_rect()
+    for (let i=(allWin.length-1); i>=0; i--) {
+    // for (let i=0; i < allWin.length; i++) {
+      let otherWin = allWin[i]
+      if (otherWin == win) {
+	break;
+      }
+      if (otherWin.is_hidden()) {
+	continue;
+      }
+      let otherRect = otherWin.get_frame_rect();
+      let [intersects, intersection] = otherRect.intersect(winRect);
+      if (!intersects) {
+	continue;
+      }
+      // global.log(this._win2str(otherWin) + ' overlaps with ' + this._win2str(win));
+      if (winRect.area() / intersection.area() < 2) {
+	// global.log(this._win2str(win) + this._rect2str(winRect) + ' is covered by '
+	//  + this._win2str(otherWin) + this._rect2str(otherRect))
+	return true;
+      }
+    }
+    return false;
+  },
+
   _isCandidate: function(focusWin, candidateWin, direction){
 
   	let focus = focusWin.get_center();
@@ -227,6 +264,7 @@ MoveFocus.prototype = {
     if (focusRect.overlap(candidateRect)) {
       return false;
     }
+    // global.log('Candidate: ' + this._win2str(candidateWin) + this._rect2str(candidateRect));
 
 		// a window is candidate if:
 		// 1. the center of the candidate window is further in the direction you want
@@ -443,7 +481,7 @@ MoveFocus.prototype = {
       }
 
       if (this._isCandidate(win, windows[i],direction)){
-        if (windows[i].is_hidden()) {
+        if (windows[i].is_hidden() || this._isCovered(windows[i])) {
           continue;
         }
       	candidates.push({
